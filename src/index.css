@@ -1,0 +1,52 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+#container {
+    display: flex;
+}
+
+#buttons {
+    margin: 20px;
+    position: relative;
+}
+
+#buttons button {
+    font-size: 32px;
+}
+
+#up-button {
+    position: absolute;
+    left: 70px;
+}
+
+#left-button {
+    position: absolute;
+    left: 0px;
+}
+
+#right-button {
+    position: absolute;
+    left: 120px;
+}
+
+#down-button {
+    position: absolute;
+    left: 50px;
+}
+
+.parent {
+    width: 640px;
+    height: 64px;
+    /* Aligns the children items in a row direction */
+    display: flex;
+}
+
+.child{
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
