@@ -31,8 +31,6 @@ export const VISIBILITY = Object.freeze({
   VISIBLE_SOUTH: "vis_south"
 });
 
-export const BAT = 10;
-
 // Necessary to take the modulus without getting negative results
 export function mod(n, m) {
   return ((n % m) + m) % m;
@@ -146,7 +144,7 @@ function finalizeMap(map, batIndices) {
   let safeRoomIndices = [];
   for (let y = 0; y < 6; y++) {
     for (let x = 0; x < 10; x++) {
-      if (map[y][x] === CELL_TYPES.SAFE_ROOM) {
+      if (map[y][x] === CELL_TYPES.SAFE_ROOM && !batIndices.includes(y*10 + x)) {
         safeRoomIndices.push(y*10 + x);
       }
     }

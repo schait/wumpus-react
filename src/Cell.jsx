@@ -1,9 +1,31 @@
 import { useState } from 'react'
 import { CELL_TYPES, VISIBILITY } from './game';
 
+function choosePlayerImage(cellType, lastMoveDX, lastMoveDY) {
+  if (cellType === CELL_TYPES.NE_SW) {
+    if (lastMoveDX === 1 || lastMoveDY === -1) {
+      return "../images/player-sw.png";
+    }
+    else {
+      return "../images/player-ne.png";
+    }
+  }
+  else if (cellType === CELL_TYPES.NW_SE) {
+    if (lastMoveDX === 1 || lastMoveDY === 1) {
+      return "../images/player-nw.png";
+    }
+    else {
+      return "../images/player-se.png";
+    }
+  }
+  else {
+    return "../images/player.png";
+  }
+}
+
 export default function Cell(props) {
 
-  const {cellType, active, visibility, bat} = props;
+  const {cellType, lastMove, active, visibility, bat} = props;
 
   let backgroundImage;
   let foregroundImage = '';
@@ -46,14 +68,15 @@ export default function Cell(props) {
   }
 
   if (cellType === CELL_TYPES.WUMPUS_ROOM) {
-    foregroundImage = "../images/wumpus.png";
-  }
-  else if (active) {
-    foregroundImage = "../images/player.png";
+    foregroundImage = active ? "../images/eaten.png" : "../images/wumpus.png";
   }
   else if (bat) {
-    foregroundImage = "../images/bat.png"
+    foregroundImage = active ? "../images/player+bat.png" : "../images/bat.png";
   }
+  else if (active) {
+    foregroundImage = choosePlayerImage(cellType, lastMove.dx, lastMove.dy);
+  }
+
 
   const style = {
     backgroundImage: `url(${backgroundImage})`,

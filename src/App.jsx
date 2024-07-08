@@ -8,6 +8,8 @@ export default function App(props) {
   const [currentY, setCurrentY] = useState(props.currentY);
   const [canMoveX, setCanMoveX] = useState({"-1": true, 1: true});
   const [canMoveY, setCanMoveY] = useState({"-1": true, 1: true});
+  const [currentDX, setCurrentDX] = useState();
+  const [currentDY, setCurrentDY] = useState();
 
   function move(dx, dy) {
     console.log("Move", dx, dy, "Can Move:", canMoveX, canMoveY);
@@ -72,6 +74,8 @@ export default function App(props) {
     }
     setCanMoveX(newMoveInfo.x);
     setCanMoveY(newMoveInfo.y);
+    setCurrentDX(dx);
+    setCurrentDY(dy);
     if (map[newY][newX].visibility === VISIBILITY.HIDDEN || map[newY][newX].visibility === newMoveInfo.vis) {
       map[newY][newX].visibility = newMoveInfo.vis;
     }
@@ -89,6 +93,7 @@ export default function App(props) {
           key={y*10 + x}
           cellType={map[y][x].cellType}
           active={x === currentX && y === currentY}
+          lastMove={{dx: currentDX, dy: currentDY}}
           visibility={map[y][x].visibility}
           bat={map[y][x].bat}
           batAwake={false}
@@ -97,17 +102,34 @@ export default function App(props) {
     rows.push(<div key={'r' + y} className='parent'>{cells}</div>)
   }
 
-  return (
-    <div id="container">
-      <div>{rows}</div>
-      <div id="buttons">
-        <button id="up-button" onClick={() => move(0, -1)}>Up</button>
-        <br/><br/><br/>
-        <button id="left-button" onClick={() => move(-1, 0)}>Left</button>
-        <button id="right-button" onClick={() => move(1, 0)}>Right</button>
-        <br/><br/><br/>
-        <button id="down-button" onClick={() => move(0, 1)}>Down</button>
+  const fellInPit = map[currentY][currentX].cellType === CELL_TYPES.PIT_ROOM
+  const eaten = map[currentY][currentX].cellType === CELL_TYPES.WUMPUS_ROOM;
+
+  if (fellInPit || eaten) {
+    const loseMessage = fellInPit ? "You fell in a pit!" : "Eaten by the Wumpus!";
+    return (
+      <div id="container">
+        <div>{rows}</div>
+        <div id="gameover">
+          <p>{loseMessage}</p>
+          <button style={{marginLeft: eaten ? "80px" : "40px"}} onClick={() => window.location.href = ""}>Play again</button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+  else {
+    return (
+      <div id="container">
+        <div>{rows}</div>
+        <div id="buttons">
+          <button id="up-button" onClick={() => move(0, -1)}>Up</button>
+          <br/><br/><br/>
+          <button id="left-button" onClick={() => move(-1, 0)}>Left</button>
+          <button id="right-button" onClick={() => move(1, 0)}>Right</button>
+          <br/><br/><br/>
+          <button id="down-button" onClick={() => move(0, 1)}>Down</button>
+        </div>
+      </div>
+    );
+  }
 }

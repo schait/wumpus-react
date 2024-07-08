@@ -12,6 +12,16 @@
     position: relative;
 }
 
+#gameover {
+    margin: 20px;
+    position: relative;
+    font-size: 32px;
+}
+
+#gameover button {
+    font-size: 24px;
+}
+
 #buttons button {
     font-size: 32px;
 }
