@@ -10,6 +10,11 @@
 #buttons {
     margin: 20px;
     position: relative;
+    font-size: 24px;
+}
+
+#buttons p {
+    margin-left: 20px;
 }
 
 #gameover {
@@ -24,6 +29,7 @@
 
 #buttons button {
     font-size: 32px;
+    padding: 2px;
 }
 
 #up-button {
@@ -41,9 +47,18 @@
     left: 120px;
 }
 
-#down-button {
+#down-button, #shoot-button {
     position: absolute;
     left: 50px;
+}
+
+#cancel-button {
+    position: absolute;
+    left: 45px;
+}
+
+.shoot {
+    background-color: #ffaa99;
 }
 
 .parent {

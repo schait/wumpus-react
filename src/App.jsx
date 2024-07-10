@@ -2,6 +2,31 @@ import { useState } from 'react'
 import Cell from './Cell';
 import { CELL_TYPES, VISIBILITY, mod } from './game';
 
+
+function shootArrow(map, x, y, dx, dy) {
+  if (map[y][x].cellType === CELL_TYPES.NE_SW) {
+    // right -> down, down -> right, up -> left, left -> up. dy = dx, dx = dy
+    const newX = mod(x + dy, 10);
+    const newY = mod(y + dx, 6);
+    console.log(`${x}, ${y} is a NE-SW tunnel. Came from ${mod(x-dx, 10)}, ${mod(y-dy, 6)}, going to ${newX}, ${newY}`);
+    return shootArrow(map, newX, newY, dy, dx);
+  }
+  else if (map[y][x].cellType === CELL_TYPES.NW_SE) {
+    // right -> up, down -> left, up -> right, left -> down. dy = -dx, dx = -dy
+    const newX = mod(x - dy, 10);
+    const newY = mod(y - dx, 6);
+    console.log(`${x}, ${y} is a NW-SE tunnel. Came from ${mod(x-dx, 10)}, ${mod(y-dy, 6)}, going to ${newX}, ${newY}`);
+    return shootArrow(map, newX, newY, -dy, -dx);
+  }
+  else {
+    // We hit a room
+    console.log(`Shot hits room ${x}, ${y}, type ${map[y][x].cellType}`);
+    const success = map[y][x].cellType === CELL_TYPES.WUMPUS_ROOM;
+    console.log("success", success);
+    return success;
+  }
+}
+
 export default function App(props) {
   const [map, setMap] = useState(props.map);
   const [currentX, setCurrentX] = useState(props.currentX);
@@ -10,6 +35,30 @@ export default function App(props) {
   const [canMoveY, setCanMoveY] = useState({"-1": true, 1: true});
   const [currentDX, setCurrentDX] = useState();
   const [currentDY, setCurrentDY] = useState();
+  const [shootMode, setShootMode] = useState(false);
+  const [win, setWin] = useState(false);
+  const [missed, setMissed] = useState(false);
+  const [allVisible, setAllVisible] = useState(false);
+
+  function activateShoot() {
+    if (map[currentY][currentX].cellType == CELL_TYPES.NW_SE || map[currentY][currentX].cellType == CELL_TYPES.NE_SW) {
+      alert("Must be in a room to shoot!");
+    }
+    else {
+      setShootMode(true);
+    }
+  }
+
+  function shoot(dx, dy) {
+    const success = shootArrow(map, mod(currentX+dx, 10), mod(currentY+dy, 6), dx, dy);
+    console.log("Success", success);
+    if (success) {
+      setWin(true);
+    }
+    else {
+      setMissed(true);
+    }
+  }
 
   function move(dx, dy) {
     console.log("Move", dx, dy, "Can Move:", canMoveX, canMoveY);
@@ -94,7 +143,7 @@ export default function App(props) {
           cellType={map[y][x].cellType}
           active={x === currentX && y === currentY}
           lastMove={{dx: currentDX, dy: currentDY}}
-          visibility={map[y][x].visibility}
+          visibility={allVisible || map[y][x].visibility}
           bat={map[y][x].bat}
           batAwake={false}
         />)
@@ -103,16 +152,51 @@ export default function App(props) {
   }
 
   const fellInPit = map[currentY][currentX].cellType === CELL_TYPES.PIT_ROOM
-  const eaten = map[currentY][currentX].cellType === CELL_TYPES.WUMPUS_ROOM;
+  const eaten = map[currentY][currentX].cellType === CELL_TYPES.WUMPUS_ROOM && !win;
 
-  if (fellInPit || eaten) {
-    const loseMessage = fellInPit ? "You fell in a pit!" : "Eaten by the Wumpus!";
+  if (win || missed || fellInPit || eaten) {
+    console.log("Game over", win, missed, fellInPit, eaten)
+    let message;
+    if (win) {
+      message = "You got the Wumpus! You win!";
+    }
+    else if (missed) {
+      message = "You missed your shot! You lose.";
+    }
+    else if (fellInPit) {
+      message = "You fell in a pit! You lose."
+    }
+    else {
+      message = "Eaten by the Wumpus! You lose.";
+    }
     return (
       <div id="container">
         <div>{rows}</div>
         <div id="gameover">
-          <p>{loseMessage}</p>
-          <button style={{marginLeft: eaten ? "80px" : "40px"}} onClick={() => window.location.href = ""}>Play again</button>
+          <p>{message}</p>
+          <br/>
+          <button style={{marginLeft: fellInPit ? "100px" : "140px"}} onClick={() => setAllVisible(true)}>View map</button>
+          <br/><br/>
+          <button style={{marginLeft: fellInPit ? "100px" : "140px"}} onClick={() => window.location.href = ""}>Play again</button>
+        </div>
+      </div>
+    );
+  }
+  else if (shootMode) {
+    return (
+      <div id="container">
+        <div>{rows}</div>
+        <div id="buttons">
+          <p>Click to shoot!</p>
+          <br/>
+          <button className="shoot" id="up-button" onClick={() => shoot(0, -1)}>Up</button>
+          <br/><br/>
+          <button className="shoot" id="left-button" onClick={() => shoot(-1, 0)}>Left</button>
+          <button className="shoot" id="right-button" onClick={() => shoot(1, 0)}>Right</button>
+          <br/><br/>
+          <button className="shoot" id="down-button" onClick={() => shoot(0, 1)}>Down</button>
+          <br/><br/><br/><br/>
+          <button id="cancel-button" onClick={() => setShootMode(false)}>Cancel</button>
         </div>
       </div>
     );
@@ -122,12 +206,16 @@ export default function App(props) {
       <div id="container">
         <div>{rows}</div>
         <div id="buttons">
+          <p>Click to move.</p>
+          <br/>
           <button id="up-button" onClick={() => move(0, -1)}>Up</button>
-          <br/><br/><br/>
+          <br/><br/>
           <button id="left-button" onClick={() => move(-1, 0)}>Left</button>
           <button id="right-button" onClick={() => move(1, 0)}>Right</button>
-          <br/><br/><br/>
+          <br/><br/>
           <button id="down-button" onClick={() => move(0, 1)}>Down</button>
+          <br/><br/><br/><br/>
+          <button id="shoot-button" onClick={activateShoot}>Shoot</button>
         </div>
       </div>
     );

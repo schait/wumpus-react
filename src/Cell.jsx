@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { CELL_TYPES, VISIBILITY } from './game';
 
 function choosePlayerImage(cellType, lastMoveDX, lastMoveDY) {
@@ -80,7 +79,7 @@ export default function Cell(props) {
 
   const style = {
     backgroundImage: `url(${backgroundImage})`,
-    opacity: visibility === VISIBILITY.HIDDEN ? 0.2 : 1
+    opacity: visibility === VISIBILITY.HIDDEN ? 0 : 1
   }
 
   return (
