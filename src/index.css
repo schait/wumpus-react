@@ -12,13 +12,15 @@ body {
 }
 
 #buttons {
-    margin: 20px;
+    margin-left: 20px;
     position: relative;
     font-size: 24px;
 }
 
 #buttons p {
     margin-left: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 #gameover {

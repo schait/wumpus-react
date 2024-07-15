@@ -1,0 +1,20 @@
+p, td {
+    font-size: 20px;
+}
+
+.hazard-info {
+    width: 80%;
+    padding-right: 10px;
+}
+
+h1 {
+    text-align: center;
+}
+
+a {
+    font-size: 24px;
+}
+
+#click-here {
+    text-align: center;
+}

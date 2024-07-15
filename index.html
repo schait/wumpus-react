@@ -2,12 +2,72 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hunt the Wumpus</title>
+    <link rel="stylesheet" href="instructions.css"/>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <h1>Hunt The Wumpus</h1>
+
+    <p>
+      For too long now, your town has been victimized by the attacks of that terrible beast, the Wumpus. Determined
+      to put a stop to it, you venture into the maze-like underground cavern where the Wumpus is known to live.
+    </p>
+    <p>
+      You start out in a safe room in the cavern. Explore the maze by clicking the buttons to move up, down, left, or
+      right. The maze is wrap-around in all directions so you can move off the edge on one side and you will appear on
+      the other side. Be careful, because the cavern is filled with hazards:
+    </p>
+    <table>
+      <tr>
+        <td class="hazard-info">
+          If you enter a room with <b>green walls</b> (as shown to the right), that means you are next to a slime pit. There
+          are two slime pits in the cavern. Entering a slime pit will lead to a fatal fall.
+        </td>
+        <td>
+          <img src="images/slime.png"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="hazard-info">
+          The Wumpus' lair is in one of the rooms in the cavern. If you enter a room with <b>bloodspots</b> (as shown to the
+          right), that means you are within <b><i>two</i></b> rooms of the Wumpus. Needless to say, do not enter the lair
+          of the Wumpus or you will be eaten alive.
+        </td>
+        <td>
+          <img src="images/blood.png"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="hazard-info">
+          If you enter a room with both green walls and bloodspots, that means you are next to a slime pit <b><i>and</i></b>
+          within two rooms of the Wumpus. Take your next steps carefully!
+        </td>
+        <td>
+          <img src="images/blood-slime.png"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="hazard-info">
+          Two of the rooms in the cavern are inhabited by giant bats. The first time you enter a room with a bat, you will
+          awaken it. If you re-enter that room, it may fly you to another random room in the maze. The bat may even
+          drop you into a pit or straight into the jaws of the Wumpus!
+        </td>
+        <td style="padding-left: 10px">
+          <img src="images/bat.png"/>
+        </td>
+      </tr>
+    </table>
+    <p>
+      When you think you know where the Wumpus is, move into a room that connects to its lair and click the Shoot button.
+      Fire the arrow into the tunnel that you think leads to the Wumpus. It doesn't matter if the tunnel is straight or not &mdash;
+      the arrow will still follow the tunnel into the next cavern.
+    </p>
+    <p>
+      If the cavern you fire into is the Wumpus' lair, you win! If you are wrong, you lose the game &mdash; your missed shot
+      will likely wake the Wumpus, and you will be very lucky to get out of the cavern alive.
+    </p>
+
+    <p id="click-here"><a href="wumpus.html">Click to play</a></p>
   </body>
 </html>
