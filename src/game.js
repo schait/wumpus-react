@@ -1,15 +1,5 @@
 import lodash from 'lodash';
 
-// Room Types
-// export const ROOM_TYPES = Object.freeze({
-//   SAFE_ROOM: "safe",
-//   BLOOD_ROOM: "blood",
-//   SLIME_ROOM: "slime",
-//   BLOOD_SLIME_ROOM: "blood+slime",
-//   PIT_ROOM: "PIT",
-//   WUMPUS_ROOM: "WUMPUS"
-// });
-
 const NUM_ROOMS = 30;
 
 export const CELL_TYPES = Object.freeze({
@@ -21,7 +11,6 @@ export const CELL_TYPES = Object.freeze({
   BLOOD_SLIME_ROOM: 5,
   PIT_ROOM: 6,
   WUMPUS_ROOM: 7,
-  START_ROOM: 22
 });
 
 export const VISIBILITY = Object.freeze({
@@ -162,7 +151,8 @@ function finalizeMap(map, batIndices) {
         'cellType': map[y][x],
         'active': active,
         'visibility': active ? VISIBILITY.VISIBLE : VISIBILITY.HIDDEN,
-        'bat': false
+        'bat': false,
+        'batAwake': false
       }
     }
   }
@@ -222,10 +212,11 @@ export function setupGame() {
   }
 
   for (let i = 0; i < 6; i++) {
-    console.log(arrayToSpaceSeparatedString(map[i]))
+    console.log(arrayToSpaceSeparatedString(map[i]));
   }
 
-  const finalMapInfo = finalizeMap(map, batIndices)
+  const finalMapInfo = finalizeMap(map, batIndices);
+  finalMapInfo.roomIndices = roomIndices;
   console.log("Final map info", finalMapInfo)
   return finalMapInfo;
 }

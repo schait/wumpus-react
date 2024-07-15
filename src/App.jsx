@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Cell from './Cell';
 import { CELL_TYPES, VISIBILITY, mod } from './game';
-
+import lodash from 'lodash';
 
 function shootArrow(map, x, y, dx, dy) {
   if (map[y][x].cellType === CELL_TYPES.NE_SW) {
@@ -39,6 +39,8 @@ export default function App(props) {
   const [win, setWin] = useState(false);
   const [missed, setMissed] = useState(false);
   const [allVisible, setAllVisible] = useState(false);
+  const roomIndices = props.roomIndices;
+  console.log(roomIndices)
 
   function activateShoot() {
     if (map[currentY][currentX].cellType == CELL_TYPES.NW_SE || map[currentY][currentX].cellType == CELL_TYPES.NE_SW) {
@@ -58,6 +60,20 @@ export default function App(props) {
     else {
       setMissed(true);
     }
+  }
+
+  function batSnatch(fromX, fromY) {
+    const possibleRoomIndices = roomIndices.filter(i => fromY * 10 + fromX !== i && !map[Math.floor(i / 10)][i % 10].bat);
+    const newRoomIndex = lodash.sample(possibleRoomIndices);
+    const toY = Math.floor(newRoomIndex / 10);
+    const toX = newRoomIndex % 10;
+    console.log(`Bat snatch from ${fromX} ${fromY} to ${toX} ${toY}`);
+    map[fromY][fromX].bat = false;
+    map[toY][toX].bat = true;
+    map[toY][toX].batAwake = false;
+    setCurrentY(toY);
+    setCurrentX(toX);
+    map[toY][toX].visibility = VISIBILITY.VISIBLE;
   }
 
   function move(dx, dy) {
@@ -131,6 +147,15 @@ export default function App(props) {
     else {
       map[newY][newX].visibility = VISIBILITY.VISIBLE;
     }
+    if (map[newY][newX].bat) {
+      if (!map[newY][newX].batAwake) {
+        map[newY][newX].batAwake = true;
+      }
+      else {
+        console.log(`SUPER BAT SNATCH! from ${newX} ${newY}`);
+        batSnatch(newX, newY);
+      }
+    }
   }
 
   let rows = [];
@@ -145,7 +170,7 @@ export default function App(props) {
           lastMove={{dx: currentDX, dy: currentDY}}
           visibility={allVisible || map[y][x].visibility}
           bat={map[y][x].bat}
-          batAwake={false}
+          batAwake={map[y][x].batAwake}
         />)
     }
     rows.push(<div key={'r' + y} className='parent'>{cells}</div>)
@@ -171,7 +196,7 @@ export default function App(props) {
     }
     return (
       <div id="container">
-        <div>{rows}</div>
+        <div id="game">{rows}</div>
         <div id="gameover">
           <p>{message}</p>
           <br/>
@@ -185,7 +210,7 @@ export default function App(props) {
   else if (shootMode) {
     return (
       <div id="container">
-        <div>{rows}</div>
+        <div id="game">{rows}</div>
         <div id="buttons">
           <p>Click to shoot!</p>
           <br/>
@@ -204,7 +229,7 @@ export default function App(props) {
   else {
     return (
       <div id="container">
-        <div>{rows}</div>
+        <div id="game">{rows}</div>
         <div id="buttons">
           <p>Click to move.</p>
           <br/>
