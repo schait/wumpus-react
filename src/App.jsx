@@ -8,21 +8,21 @@ function shootArrow(map, x, y, dx, dy) {
     // right -> down, down -> right, up -> left, left -> up. dy = dx, dx = dy
     const newX = mod(x + dy, 10);
     const newY = mod(y + dx, 6);
-    console.log(`${x}, ${y} is a NE-SW tunnel. Came from ${mod(x-dx, 10)}, ${mod(y-dy, 6)}, going to ${newX}, ${newY}`);
+    //console.log(`${x}, ${y} is a NE-SW tunnel. Came from ${mod(x-dx, 10)}, ${mod(y-dy, 6)}, going to ${newX}, ${newY}`);
     return shootArrow(map, newX, newY, dy, dx);
   }
   else if (map[y][x].cellType === CELL_TYPES.NW_SE) {
     // right -> up, down -> left, up -> right, left -> down. dy = -dx, dx = -dy
     const newX = mod(x - dy, 10);
     const newY = mod(y - dx, 6);
-    console.log(`${x}, ${y} is a NW-SE tunnel. Came from ${mod(x-dx, 10)}, ${mod(y-dy, 6)}, going to ${newX}, ${newY}`);
+    //console.log(`${x}, ${y} is a NW-SE tunnel. Came from ${mod(x-dx, 10)}, ${mod(y-dy, 6)}, going to ${newX}, ${newY}`);
     return shootArrow(map, newX, newY, -dy, -dx);
   }
   else {
     // We hit a room
-    console.log(`Shot hits room ${x}, ${y}, type ${map[y][x].cellType}`);
+    //console.log(`Shot hits room ${x}, ${y}, type ${map[y][x].cellType}`);
     const success = map[y][x].cellType === CELL_TYPES.WUMPUS_ROOM;
-    console.log("success", success);
+    //console.log("success", success);
     return success;
   }
 }
@@ -40,7 +40,7 @@ export default function App(props) {
   const [missed, setMissed] = useState(false);
   const [allVisible, setAllVisible] = useState(false);
   const roomIndices = props.roomIndices;
-  console.log(roomIndices)
+  //console.log(roomIndices)
 
   function activateShoot() {
     if (map[currentY][currentX].cellType == CELL_TYPES.NW_SE || map[currentY][currentX].cellType == CELL_TYPES.NE_SW) {
@@ -53,7 +53,7 @@ export default function App(props) {
 
   function shoot(dx, dy) {
     const success = shootArrow(map, mod(currentX+dx, 10), mod(currentY+dy, 6), dx, dy);
-    console.log("Success", success);
+    //console.log("Success", success);
     if (success) {
       setWin(true);
     }
@@ -67,7 +67,7 @@ export default function App(props) {
     const newRoomIndex = lodash.sample(possibleRoomIndices);
     const toY = Math.floor(newRoomIndex / 10);
     const toX = newRoomIndex % 10;
-    console.log(`Bat snatch from ${fromX} ${fromY} to ${toX} ${toY}`);
+    //console.log(`Bat snatch from ${fromX} ${fromY} to ${toX} ${toY}`);
     map[fromY][fromX].bat = false;
     map[toY][toX].bat = true;
     map[toY][toX].batAwake = false;
@@ -77,14 +77,14 @@ export default function App(props) {
   }
 
   function move(dx, dy) {
-    console.log("Move", dx, dy, "Can Move:", canMoveX, canMoveY);
+    //console.log("Move", dx, dy, "Can Move:", canMoveX, canMoveY);
     let newMoveInfo, newX, newY;
     if (dx && canMoveX[dx]) {
       newX = mod(currentX + dx, 10);
       newY = currentY;
       setCurrentX(newX);
       if (map[newY][newX].cellType === CELL_TYPES.NE_SW) {
-        console.log("Moving into NE/SW");
+        //console.log("Moving into NE/SW");
         if (dx > 0) {
           newMoveInfo = {x: {"-1": true, 1: false}, y: {"-1": false, 1: true}, vis: VISIBILITY.VISIBLE_SOUTH}
         }
@@ -93,7 +93,7 @@ export default function App(props) {
         }
       }
       else if (map[newY][newX].cellType === CELL_TYPES.NW_SE) {
-        console.log("Moving into NW/SE");
+        //console.log("Moving into NW/SE");
         if (dx > 0) {
           newMoveInfo = {x: {"-1": true, 1: false}, y: {"-1": true, 1: false}, vis: VISIBILITY.VISIBLE_NORTH}
         }
@@ -102,7 +102,7 @@ export default function App(props) {
         }
       }
       else {
-        console.log("Moving into room");
+        //console.log("Moving into room");
         newMoveInfo = {x: {"-1": true, 1: true}, y: {"-1": true, 1: true}, vis: VISIBILITY.VISIBLE}
       }
     }
@@ -111,7 +111,7 @@ export default function App(props) {
       newX = currentX;
       setCurrentY(newY);
       if (map[newY][newX].cellType === CELL_TYPES.NE_SW) {
-        console.log("Moving into NE/SW");
+        //console.log("Moving into NE/SW");
         if (dy < 0) {
           newMoveInfo = {x: {"-1": true, 1: false}, y: {"-1": false, 1: true}, vis: VISIBILITY.VISIBLE_SOUTH}
         }
@@ -120,7 +120,7 @@ export default function App(props) {
         }
       }
       else if (map[newY][newX].cellType === CELL_TYPES.NW_SE) {
-        console.log("Moving into NW/SE");
+        //console.log("Moving into NW/SE");
         if (dy > 0) {
           newMoveInfo = {x: {"-1": true, 1: false}, y: {"-1": true, 1: false}, vis: VISIBILITY.VISIBLE_NORTH}
         }
@@ -129,12 +129,12 @@ export default function App(props) {
         }
       }
       else {
-        console.log("Moving into room");
+        //console.log("Moving into room");
         newMoveInfo = {x: {"-1": true, 1: true}, y: {"-1": true, 1: true}, vis: VISIBILITY.VISIBLE}
       }
     }
     else {
-      console.log("Can't move", dx, dy);
+      //console.log("Can't move", dx, dy);
       return;
     }
     setCanMoveX(newMoveInfo.x);
@@ -152,7 +152,7 @@ export default function App(props) {
         map[newY][newX].batAwake = true;
       }
       else {
-        console.log(`SUPER BAT SNATCH! from ${newX} ${newY}`);
+        //console.log(`SUPER BAT SNATCH! from ${newX} ${newY}`);
         batSnatch(newX, newY);
       }
     }
@@ -180,7 +180,7 @@ export default function App(props) {
   const eaten = map[currentY][currentX].cellType === CELL_TYPES.WUMPUS_ROOM && !win;
 
   if (win || missed || fellInPit || eaten) {
-    console.log("Game over", win, missed, fellInPit, eaten)
+    //console.log("Game over", win, missed, fellInPit, eaten)
     let message;
     if (win) {
       message = "You got the Wumpus! You win!";
